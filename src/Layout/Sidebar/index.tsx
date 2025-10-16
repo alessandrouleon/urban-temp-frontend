@@ -3,7 +3,7 @@ import {
     Home,
     Layers,
     LayoutGrid,
-    //   Menu,
+    Map,
     Package,
     Settings,
     User,
@@ -20,8 +20,9 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
 
     const menuItems = [
         { icon: Home, label: "Home", path: "/" },
-        { icon: Package, label: "Products", path: "/products" },
         { icon: LayoutGrid, label: "Dashboard", path: "/dashboard" },
+        { icon: Map, label: "Map", path: "/map" },
+        { icon: Package, label: "Products", path: "/products" },
         { icon: Settings, label: "Setting", path: "/setting" },
         { icon: Layers, label: "Log", path: "/log" },
         { icon: FileText, label: "Report", path: "/report" },

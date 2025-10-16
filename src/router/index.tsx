@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router-dom";
+import MapaManaus from "../components/Map";
 import MainLayout from "../Layout/MainLayout";
 import { Dashboard } from "../pages/Dashboard";
 import { Home } from "../pages/Home";
@@ -12,8 +13,9 @@ export function AppRoutes() {
         <MainLayout>
             <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/products" element={<Products />} />
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/map" element={<MapaManaus />} />
+                <Route path="/products" element={<Products />} />
                 <Route path="/setting" element={<Setting />} />
                 <Route path="/log" element={<Log />} />
                 <Route path="/report" element={<Report />} />
