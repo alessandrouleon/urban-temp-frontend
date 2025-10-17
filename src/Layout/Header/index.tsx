@@ -1,4 +1,4 @@
-import { Menu, User } from "lucide-react";
+import { Menu } from "lucide-react";
 
 interface HeaderProps {
     onOpenSidebar: () => void; // função para abrir sidebar no mobile
@@ -22,14 +22,14 @@ export default function Header({
                 <h1 className="text-lg font-semibold text-gray-700">{title}</h1>
             </div>
 
-            <div className="flex items-center gap-3">
+            {/* <div className="flex items-center gap-3">
                 <div className="hidden sm:flex items-center gap-2">
                     <span className="text-sm text-gray-600">Olá, Saheb</span>
                     <div className="w-8 h-8 bg-blue-600 text-white flex items-center justify-center rounded-full">
                         <User size={16} />
                     </div>
                 </div>
-            </div>
+            </div> */}
         </header>
     );
 }

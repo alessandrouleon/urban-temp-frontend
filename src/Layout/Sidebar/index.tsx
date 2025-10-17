@@ -4,9 +4,7 @@ import {
     Layers,
     LayoutGrid,
     Map,
-    Package,
     Settings,
-    User,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
@@ -21,8 +19,7 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     const menuItems = [
         { icon: Home, label: "Home", path: "/" },
         { icon: LayoutGrid, label: "Dashboard", path: "/dashboard" },
-        { icon: Map, label: "Map", path: "/map" },
-        { icon: Package, label: "Products", path: "/products" },
+        { icon: Map, label: "Map", path: "/maps" },
         { icon: Settings, label: "Setting", path: "/setting" },
         { icon: Layers, label: "Log", path: "/log" },
         { icon: FileText, label: "Report", path: "/report" },
@@ -34,7 +31,7 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
             <aside
                 className={`
                 fixed inset-y-0 left-0 z-50 flex flex-col
-                bg-blue-600 text-white shadow-lg
+                bg-blue-500 text-white shadow-lg
                 transition-all duration-300 ease-in-out
                 w-56
                 ${isOpen ? "translate-x-0" : "-translate-x-full"}
@@ -44,15 +41,15 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b border-blue-500">
                     <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-blue-800 rounded flex items-center justify-center text-sm font-bold">
-                            S1
+                        <div className="w-15 h-8 bg-blue-800 rounded flex items-center justify-center text-sm font-bold">
+                            Clima
                         </div>
                         <span
                             className={`font-semibold ${
                                 isOpen ? "block" : "hidden"
                             } lg:block`}
                         >
-                            Logo
+                            Tempo
                         </span>
                     </div>
 
@@ -97,7 +94,7 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 </nav>
 
                 {/* User Profile */}
-                <div className="p-4 border-t border-blue-500">
+                {/* <div className="p-4 border-t border-blue-500">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-blue-800 rounded-full flex items-center justify-center flex-shrink-0">
                             <User size={20} />
@@ -113,7 +110,7 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                             </p>
                         </div>
                     </div>
-                </div>
+                </div> */}
             </aside>
         </div>
     );

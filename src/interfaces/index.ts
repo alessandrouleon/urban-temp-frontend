@@ -14,3 +14,11 @@ export interface OverpassElement {
     };
     type: string;
 }
+
+export type WeatherData = {
+    temp: string;
+    feelsLike: string;
+    weathercode: string;
+    humidity: string;
+    windspeed: string;
+};
