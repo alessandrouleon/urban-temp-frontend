@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { WeatherData } from "../interfaces";
+import type { WeatherData } from "../interfaces/map-interface";
 
 export const getTemperature = async (
     lat: number,

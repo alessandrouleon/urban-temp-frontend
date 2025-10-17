@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { WeatherData } from "../../interfaces";
+import type { WeatherData } from "../../interfaces/map-interface";
 import { getTemperature } from "../../services/weatherService"; // ajuste o caminho conforme necessário
 
 interface BairroClima {

@@ -1,5 +1,8 @@
 import axios from "axios";
-import type { Neighborhood, OverpassElement } from "../interfaces";
+import type {
+    Neighborhood,
+    OverpassElement,
+} from "../interfaces/map-interface";
 
 export const getNeighborhoodsFromManaus = async (): Promise<Neighborhood[]> => {
     const query = `

@@ -22,3 +22,8 @@ export type WeatherData = {
     humidity: string;
     windspeed: string;
 };
+
+export interface MapsProps {
+    width?: string;
+    height?: string;
+}

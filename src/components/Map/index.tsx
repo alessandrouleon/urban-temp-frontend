@@ -3,18 +3,31 @@ import "leaflet/dist/leaflet.css";
 import React, { useEffect, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer, Tooltip } from "react-leaflet";
 
-import type { Neighborhood, WeatherData } from "../../interfaces";
+import type {
+    MapsProps,
+    Neighborhood,
+    WeatherData,
+} from "../../interfaces/map-interface";
 import { getNeighborhoodsFromManaus } from "../../services/overpassService";
 import { getTemperature } from "../../services/weatherService";
 
-interface MapsProps {
-    width?: string;
-    height?: string;
-}
-
-const markerIcon = new Icon({
+const coldIcon = new Icon({
     iconUrl:
-        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
+        "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+});
+
+const warmIcon = new Icon({
+    iconUrl:
+        "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+});
+
+const hotIcon = new Icon({
+    iconUrl:
+        "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
     iconSize: [25, 41],
     iconAnchor: [12, 41],
 });
@@ -56,7 +69,6 @@ export const Maps: React.FC<MapsProps> = ({
             );
 
             const results = await Promise.allSettled(promises);
-            console.log("res::", results);
 
             const tempData: Record<string, WeatherData | null> = {};
             results.forEach((r) => {
@@ -84,11 +96,28 @@ export const Maps: React.FC<MapsProps> = ({
             {neighborhoods.map((n) => {
                 const clima = temperaturas[n.name];
 
+                const tempNumber =
+                    clima?.temp !== undefined
+                        ? parseFloat(String(clima.temp).replace(",", "."))
+                        : undefined;
+
+                if (tempNumber === undefined) return null;
+
+                let iconToUse = coldIcon; // padrão frio
+                if (tempNumber !== undefined) {
+                    if (tempNumber <= 27) {
+                        iconToUse = coldIcon;
+                    } else if (tempNumber <= 30) {
+                        iconToUse = warmIcon;
+                    } else {
+                        iconToUse = hotIcon;
+                    }
+                }
                 return (
                     <Marker
                         key={`${n.name}-${n.lat}-${n.lon}`}
                         position={[n.lat, n.lon]}
-                        icon={markerIcon}
+                        icon={iconToUse}
                     >
                         <Tooltip
                             direction="top"
