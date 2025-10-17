@@ -1,4 +1,4 @@
-import { Icon, type LatLngTuple } from "leaflet";
+import { type LatLngTuple } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import React, { useEffect, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer, Tooltip } from "react-leaflet";
@@ -8,123 +8,116 @@ import type {
     Neighborhood,
     WeatherData,
 } from "../../interfaces/map-interface";
-import { getNeighborhoodsFromManaus } from "../../services/overpassService";
+import { getNeighborhoodsFromCity } from "../../services/overpassService";
 import { getTemperature } from "../../services/weatherService";
+import { getIconByTemperature } from "../../shared/utils/map-icons";
+import { Loading } from "../Loading";
 
-const coldIcon = new Icon({
-    iconUrl:
-        "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-});
+const MANAUS_CENTER: LatLngTuple = [-3.036478, -59.994703];
+const TEMP_UPDATE_INTERVAL = 5 * 60 * 1000; // 5 minutos
 
-const warmIcon = new Icon({
-    iconUrl:
-        "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-});
-
-const hotIcon = new Icon({
-    iconUrl:
-        "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-});
-
-const center: LatLngTuple = [-3.1019, -60.025];
+const parseTemp = (temp: string | undefined): number | undefined => {
+    if (temp === undefined) return undefined;
+    return parseFloat(String(temp).replace(",", "."));
+};
 
 export const Maps: React.FC<MapsProps> = ({
     width = "100%",
-    height = "400px",
+    height = "100%",
 }) => {
     const [neighborhoods, setNeighborhoods] = useState<Neighborhood[]>([]);
-    const [temperaturas, setTemperaturas] = useState<
+    const [temperatures, setTemperatures] = useState<
         Record<string, WeatherData | null>
     >({});
-
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        (async () => {
-            try {
-                const data = await getNeighborhoodsFromManaus();
-                setNeighborhoods(data);
-            } catch (err) {
-                console.error("Erro ao buscar bairros:", err);
-            } finally {
-                setLoading(false);
-            }
-        })();
-    }, []);
+    async function fetchTemperatures(
+        neighborhoods: Neighborhood[],
+        setTemperatures: React.Dispatch<
+            React.SetStateAction<Record<string, WeatherData | null>>
+        >
+    ) {
+        const batchSize = 5; // número de requisições simultâneas
+        const updatedData: Record<string, WeatherData | null> = {};
+
+        for (let i = 0; i < neighborhoods.length; i += batchSize) {
+            const batch = neighborhoods.slice(i, i + batchSize);
+
+            const results = await Promise.allSettled(
+                batch.map((n) =>
+                    getTemperature(n.lat, n.lon)
+                        .then((data) => ({ name: n.name, data }))
+                        .catch(() => ({ name: n.name, data: null }))
+                )
+            );
+
+            results.forEach((r) => {
+                if (r.status === "fulfilled") {
+                    updatedData[r.value.name] = r.value.data;
+                }
+            });
+
+            // Atualiza o estado incrementalmente
+            setTemperatures((prev) => ({ ...prev, ...updatedData }));
+
+            // pequeno delay entre os blocos pra aliviar o servidor
+            await new Promise((resolve) => setTimeout(resolve, 300));
+        }
+    }
 
     useEffect(() => {
         if (neighborhoods.length === 0) return;
 
-        const fetchTemps = async () => {
-            const promises = neighborhoods.map((n) =>
-                getTemperature(n.lat, n.lon)
-                    .then((data) => ({ name: n.name, data }))
-                    .catch(() => ({ name: n.name, data: null }))
-            );
+        fetchTemperatures(neighborhoods, setTemperatures);
 
-            const results = await Promise.allSettled(promises);
+        const interval = setInterval(
+            () => fetchTemperatures(neighborhoods, setTemperatures),
+            TEMP_UPDATE_INTERVAL
+        );
 
-            const tempData: Record<string, WeatherData | null> = {};
-            results.forEach((r) => {
-                if (r.status === "fulfilled")
-                    tempData[r.value.name] = r.value.data;
-            });
-
-            setTemperaturas(tempData);
-        };
-
-        fetchTemps();
-        const interval = setInterval(fetchTemps, 5 * 60 * 1000);
         return () => clearInterval(interval);
     }, [neighborhoods]);
 
-    if (loading) return <p>Carregando bairros de Manaus...</p>;
+    useEffect(() => {
+        getNeighborhoodsFromCity()
+            .then(setNeighborhoods)
+            .catch((err: Error) =>
+                console.error("Erro ao buscar bairros:", err)
+            )
+            .finally(() => setLoading(false));
+    }, []);
+
+    if (loading) return <Loading message="Carregando bairros de Manaus..." />;
 
     return (
-        <MapContainer center={center} zoom={12} style={{ width, height }}>
+        <MapContainer
+            center={MANAUS_CENTER}
+            zoom={12}
+            style={{ width, height }}
+        >
             <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             />
 
             {neighborhoods.map((n) => {
-                const clima = temperaturas[n.name];
+                const weather = temperatures[n.name];
+                const temp = parseTemp(weather?.temp);
 
-                const tempNumber =
-                    clima?.temp !== undefined
-                        ? parseFloat(String(clima.temp).replace(",", "."))
-                        : undefined;
+                if (!temp) return null;
 
-                if (tempNumber === undefined) return null;
-
-                let iconToUse = coldIcon; // padrão frio
-                if (tempNumber !== undefined) {
-                    if (tempNumber <= 27) {
-                        iconToUse = coldIcon;
-                    } else if (tempNumber <= 30) {
-                        iconToUse = warmIcon;
-                    } else {
-                        iconToUse = hotIcon;
-                    }
-                }
                 return (
                     <Marker
                         key={`${n.name}-${n.lat}-${n.lon}`}
                         position={[n.lat, n.lon]}
-                        icon={iconToUse}
+                        icon={getIconByTemperature(temp)}
                     >
                         <Tooltip
                             direction="top"
                             offset={[0, -30]}
                             opacity={0.9}
                         >
-                            {clima ? (
+                            {weather ? (
                                 <div
                                     style={{
                                         fontSize: "0.9rem",
@@ -132,11 +125,11 @@ export const Maps: React.FC<MapsProps> = ({
                                     }}
                                 >
                                     <strong>{n.name}</strong> <br />
-                                    🌡 Temparatura: {clima.temp} <br />
-                                    🥵 Sensação: {clima.feelsLike} <br />
-                                    ☁️ Condição: {clima.weathercode} <br />
-                                    💧 Umidade: {clima.humidity} <br />
-                                    💨 Vento: {clima.windspeed}
+                                    🌡 Temparatura: {weather.temp} <br />
+                                    🥵 Sensação: {weather.feelsLike} <br />
+                                    ☁️ Condição: {weather.weathercode} <br />
+                                    💧 Umidade: {weather.humidity} <br />
+                                    💨 Vento: {weather.windspeed}
                                 </div>
                             ) : (
                                 <div>Carregando...</div>
@@ -151,16 +144,17 @@ export const Maps: React.FC<MapsProps> = ({
                                 <div className="flex items-center justify-between mb-4">
                                     <div className="flex items-start">
                                         <div className="text-5xl font-light">
-                                            {clima?.temp ?? "N/A"}
+                                            {weather?.temp ?? "N/A"}
                                         </div>
                                     </div>
 
                                     <div className="text-right text-sm space-y-1">
                                         <div className="text-gray-600">
-                                            Umidade: {clima?.humidity ?? "N/A"}
+                                            Umidade:{" "}
+                                            {weather?.humidity ?? "N/A"}
                                         </div>
                                         <div className="text-gray-600">
-                                            Vento: {clima?.windspeed ?? "N/A"}
+                                            Vento: {weather?.windspeed ?? "N/A"}
                                         </div>
                                     </div>
                                 </div>
@@ -171,7 +165,7 @@ export const Maps: React.FC<MapsProps> = ({
                                             Clima
                                         </div>
                                         <div className="text-gray-700">
-                                            {clima?.weathercode ?? "0"}
+                                            {weather?.weathercode ?? "0"}
                                         </div>
                                     </div>
                                     <div className="text-right">
@@ -179,7 +173,7 @@ export const Maps: React.FC<MapsProps> = ({
                                             Sensação
                                         </div>
                                         <div className="text-gray-700">
-                                            {clima?.feelsLike ?? "N/A"}
+                                            {weather?.feelsLike ?? "N/A"}
                                         </div>
                                     </div>
                                 </div>

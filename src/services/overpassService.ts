@@ -4,7 +4,7 @@ import type {
     OverpassElement,
 } from "../interfaces/map-interface";
 
-export const getNeighborhoodsFromManaus = async (): Promise<Neighborhood[]> => {
+export const getNeighborhoodsFromCity = async (): Promise<Neighborhood[]> => {
     const query = `
     [out:json];
     area["name"="Manaus"]->.a;
