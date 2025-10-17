@@ -15,15 +15,6 @@ export interface OverpassElement {
     type: string;
 }
 
-// export type WeatherData = {
-//     temp: string;
-//     feelsLike: string;
-//     weathercode: string;
-//     humidity: string;
-//     windspeed: string;
-// };
-
-// interfaces/map-interface.ts
 export interface WeatherData {
     temp: string; // temperatura atual
     feelsLike?: string; // sensação térmica
@@ -38,4 +29,11 @@ export interface WeatherData {
 export interface MapsProps {
     width?: string;
     height?: string;
+    neighborhoods: Neighborhood[];
+    temperatures: Record<string, WeatherData | null>;
+}
+
+export interface NeighborhoodWeather {
+    neighborhood: Neighborhood;
+    weather: WeatherData;
 }

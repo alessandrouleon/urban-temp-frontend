@@ -1,92 +1,26 @@
 import { type LatLngTuple } from "leaflet";
 import "leaflet/dist/leaflet.css";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { MapContainer, Marker, Popup, TileLayer, Tooltip } from "react-leaflet";
 
-import type {
-    MapsProps,
-    Neighborhood,
-    WeatherData,
-} from "../../interfaces/map-interface";
-import { getNeighborhoodsFromCity } from "../../services/overpassService";
-import { getTemperature } from "../../services/weatherService";
+import type { MapsProps } from "../../interfaces/map-interface";
 import { getIconByTemperature } from "../../shared/utils/map-icons";
 import { Loading } from "../Loading";
 
 const MANAUS_CENTER: LatLngTuple = [-3.036478, -59.994703];
-const TEMP_UPDATE_INTERVAL = 50 * 60 * 1000; // 50 minutos
 
 const parseTemp = (temp: string | undefined): number | undefined => {
     if (temp === undefined) return undefined;
     return parseFloat(String(temp).replace(",", "."));
 };
-
 export const Maps: React.FC<MapsProps> = ({
     width = "100%",
     height = "100%",
+    neighborhoods,
+    temperatures,
 }) => {
-    const [neighborhoods, setNeighborhoods] = useState<Neighborhood[]>([]);
-    const [temperatures, setTemperatures] = useState<
-        Record<string, WeatherData | null>
-    >({});
-    const [loading, setLoading] = useState(true);
-    async function fetchTemperatures(
-        neighborhoods: Neighborhood[],
-        setTemperatures: React.Dispatch<
-            React.SetStateAction<Record<string, WeatherData | null>>
-        >
-    ) {
-        const batchSize = 5; // número de requisições simultâneas
-        const updatedData: Record<string, WeatherData | null> = {};
-
-        for (let i = 0; i < neighborhoods.length; i += batchSize) {
-            const batch = neighborhoods.slice(i, i + batchSize);
-
-            const results = await Promise.allSettled(
-                batch.map((n) =>
-                    getTemperature(n.lat, n.lon)
-                        .then((data) => ({ name: n.name, data }))
-                        .catch(() => ({ name: n.name, data: null }))
-                )
-            );
-
-            results.forEach((r) => {
-                if (r.status === "fulfilled") {
-                    updatedData[r.value.name] = r.value.data;
-                }
-            });
-
-            // Atualiza o estado incrementalmente
-            setTemperatures((prev) => ({ ...prev, ...updatedData }));
-
-            // pequeno delay entre os blocos pra aliviar o servidor
-            await new Promise((resolve) => setTimeout(resolve, 300));
-        }
-    }
-
-    useEffect(() => {
-        if (neighborhoods.length === 0) return;
-
-        fetchTemperatures(neighborhoods, setTemperatures);
-
-        const interval = setInterval(
-            () => fetchTemperatures(neighborhoods, setTemperatures),
-            TEMP_UPDATE_INTERVAL
-        );
-
-        return () => clearInterval(interval);
-    }, [neighborhoods]);
-
-    useEffect(() => {
-        getNeighborhoodsFromCity()
-            .then(setNeighborhoods)
-            .catch((err: Error) =>
-                console.error("Erro ao buscar bairros:", err)
-            )
-            .finally(() => setLoading(false));
-    }, []);
-
-    if (loading) return <Loading message="Carregando bairros de Manaus..." />;
+    if (!neighborhoods.length)
+        return <Loading message="Carregando bairros..." />;
 
     return (
         <MapContainer
@@ -102,7 +36,6 @@ export const Maps: React.FC<MapsProps> = ({
             {neighborhoods.map((n) => {
                 const weather = temperatures[n.name];
                 const temp = parseTemp(weather?.temp);
-
                 if (!temp) return null;
 
                 return (
@@ -124,7 +57,7 @@ export const Maps: React.FC<MapsProps> = ({
                                     }}
                                 >
                                     <strong>{n.name}</strong> <br />
-                                    🌡 Temparatura: {weather.temp} <br />
+                                    🌡 Temperatura: {weather.temp} <br />
                                     🥵 Sensação: {weather.feelsLike} <br />
                                     ☁️ Condição: {weather.weathercode} <br />
                                     💧 Umidade: {weather.humidity} <br />

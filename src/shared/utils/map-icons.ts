@@ -29,9 +29,8 @@ export const mapIcons = {
     hot: createMarker(redIcon),
 };
 
-// função auxiliar para escolher o ícone conforme a temperatura
 export function getIconByTemperature(temp: number): Icon {
-    if (temp <= 27) return mapIcons.cold;
-    if (temp <= 30) return mapIcons.warm;
+    if (temp <= 28) return mapIcons.cold;
+    if (temp <= 32) return mapIcons.warm;
     return mapIcons.hot;
 }
