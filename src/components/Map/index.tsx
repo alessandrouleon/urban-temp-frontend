@@ -14,7 +14,7 @@ import { getIconByTemperature } from "../../shared/utils/map-icons";
 import { Loading } from "../Loading";
 
 const MANAUS_CENTER: LatLngTuple = [-3.036478, -59.994703];
-const TEMP_UPDATE_INTERVAL = 5 * 60 * 1000; // 5 minutos
+const TEMP_UPDATE_INTERVAL = 50 * 60 * 1000; // 50 minutos
 
 const parseTemp = (temp: string | undefined): number | undefined => {
     if (temp === undefined) return undefined;
@@ -30,7 +30,6 @@ export const Maps: React.FC<MapsProps> = ({
         Record<string, WeatherData | null>
     >({});
     const [loading, setLoading] = useState(true);
-
     async function fetchTemperatures(
         neighborhoods: Neighborhood[],
         setTemperatures: React.Dispatch<

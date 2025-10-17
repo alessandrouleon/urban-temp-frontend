@@ -15,13 +15,25 @@ export interface OverpassElement {
     type: string;
 }
 
-export type WeatherData = {
-    temp: string;
-    feelsLike: string;
-    weathercode: string;
-    humidity: string;
-    windspeed: string;
-};
+// export type WeatherData = {
+//     temp: string;
+//     feelsLike: string;
+//     weathercode: string;
+//     humidity: string;
+//     windspeed: string;
+// };
+
+// interfaces/map-interface.ts
+export interface WeatherData {
+    temp: string; // temperatura atual
+    feelsLike?: string; // sensação térmica
+    humidity?: string; // umidade relativa
+    windspeed?: string; // velocidade do vento
+    weathercode?: string; // símbolo ou código do tempo
+    pressure?: string; // pressão atmosférica
+    precipitation?: string; // quantidade de chuva
+    updatedAt?: string; // data da atualização
+}
 
 export interface MapsProps {
     width?: string;
