@@ -34,12 +34,7 @@ export const getTemperature = async (
 ): Promise<WeatherData | null> => {
     try {
         const res = await axios.get(
-            `https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${lat}&lon=${lon}`,
-            {
-                headers: {
-                    "User-Agent": "YourAppName (your@email.com)", // obrigatório pela API
-                },
-            }
+            `https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${lat}&lon=${lon}`
         );
 
         const data = res.data.properties.timeseries[0].data;

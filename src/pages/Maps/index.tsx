@@ -5,7 +5,7 @@ import type { Neighborhood, WeatherData } from "../../interfaces/map-interface";
 import { getNeighborhoodsFromCity } from "../../services/overpassService";
 import { getTemperature } from "../../services/weatherService";
 
-const TEMP_UPDATE_INTERVAL = 50 * 60 * 1000; // 50 minutos
+const TEMP_UPDATE_INTERVAL = 10 * 60 * 1000; // 50 minutos
 export function PageMaps() {
     const [neighborhoods, setNeighborhoods] = useState<Neighborhood[]>([]);
     const [temperatures, setTemperatures] = useState<
@@ -43,8 +43,11 @@ export function PageMaps() {
     useEffect(() => {
         getNeighborhoodsFromCity()
             .then((data) => {
-                setNeighborhoods(data);
-                fetchTemperatures(data);
+                const newData = Array.from(
+                    new Map(data.map((item) => [item.name, item])).values()
+                );
+                setNeighborhoods(newData);
+                fetchTemperatures(newData);
             })
             .catch((err: Error) =>
                 console.error("Erro ao buscar bairros:", err)
