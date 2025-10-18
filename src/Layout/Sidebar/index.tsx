@@ -28,9 +28,15 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     return (
         <div className="min-h-screen bg-gray-100 flex">
             {/* Sidebar */}
+            {isOpen && (
+                <div
+                    className="fixed inset-0 bg-black/20 bg-opacity-50 z-[99998] lg:hidden"
+                    onClick={() => setIsOpen(false)}
+                />
+            )}
             <aside
                 className={`
-                fixed inset-y-0 left-0 z-50 flex flex-col
+                fixed inset-y-0 left-0 z-[99999] flex flex-col
                 bg-blue-500 text-white shadow-lg
                 transition-all duration-300 ease-in-out
                 w-56
