@@ -8,7 +8,7 @@ import markerBlue from "../../shared/assets/icons/marker-icon-blue.png";
 import markerOrange from "../../shared/assets/icons/marker-icon-orange.png";
 import markerRed from "../../shared/assets/icons/marker-icon-red.png";
 
-const TEMP_UPDATE_INTERVAL = 10 * 60 * 1000; // 50 minutos
+const TEMP_UPDATE_INTERVAL = 10 * 60 * 1000; // 10 minutos
 export function PageMaps() {
     const [neighborhoods, setNeighborhoods] = useState<Neighborhood[]>([]);
     const [temperatures, setTemperatures] = useState<
@@ -69,26 +69,41 @@ export function PageMaps() {
 
     return (
         <div>
-            <div className="flex bg-white rounded-lg shadow-md p-6 gap-4">
-                <div className="flex-1">
-                    <h1 className="text-2xl font-bold text-gray-800 mb-4">
-                        Mapa de Temperaturas
-                    </h1>
+            <div className="bg-white rounded-lg shadow-md p-6">
+                <h1 className="text-2xl font-bold text-gray-800 mb-4">
+                    Mapa de Temperaturas
+                </h1>
 
-                    <Maps
-                        width="100%"
-                        height="70vh"
-                        neighborhoods={neighborhoods}
-                        temperatures={temperatures}
-                    />
+                {/* Layout responsivo */}
+                <div className="flex flex-col 2xl:flex-row gap-4">
+                    <div className="block 2xl:hidden w-full [&>div]:!flex [&>div]:!flex-row [&>div]:!gap-4 [&>div]:!m-0 [&>div>*]:flex-1">
+                        <TemperatureExtremes
+                            width="100%"
+                            height="auto"
+                            neighborhoods={neighborhoods}
+                            temperatures={temperatures}
+                        />
+                    </div>
+
+                    {/* Mapa */}
+                    <div className="flex-1">
+                        <Maps
+                            width="100%"
+                            height="70vh"
+                            neighborhoods={neighborhoods}
+                            temperatures={temperatures}
+                        />
+                    </div>
+
+                    <div className="hidden 2xl:block 2xl:w-[30%]">
+                        <TemperatureExtremes
+                            width="100%"
+                            height="70vh"
+                            neighborhoods={neighborhoods}
+                            temperatures={temperatures}
+                        />
+                    </div>
                 </div>
-
-                <TemperatureExtremes
-                    width="30%"
-                    height="70vh"
-                    neighborhoods={neighborhoods}
-                    temperatures={temperatures}
-                />
             </div>
 
             <div className="flex items-center gap-4 text-sm mt-3">

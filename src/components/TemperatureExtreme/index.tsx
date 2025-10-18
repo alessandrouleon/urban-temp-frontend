@@ -229,11 +229,7 @@ export const TemperatureExtremes: React.FC<MapsProps> = ({
     }
 
     return (
-        <div className="flex flex-col gap-4 p-4" style={{ width, height }}>
-            <h1 className="text-2xl font-bold text-gray-800">
-                Temperatura Mais Quente/Fria
-            </h1>
-
+        <div className="flex flex-col gap-4 p-0" style={{ width, height }}>
             {/* Card Temperatura Mais Alta */}
             {hottest && (
                 <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-lg shadow-md p-6 border border-orange-200 hover:shadow-lg transition-shadow duration-500">
@@ -282,7 +278,7 @@ export const TemperatureExtremes: React.FC<MapsProps> = ({
 
             {/* Card Temperatura Mais Baixa */}
             {coldest && (
-                <div className="bg-gradient-to-br mt-3 from-blue-50 to-cyan-50 rounded-lg shadow-md p-6 border border-blue-200 hover:shadow-lg transition-shadow duration-500">
+                <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg shadow-md p-6 border border-blue-200 hover:shadow-lg transition-shadow duration-500">
                     <div className="flex items-center justify-between mb-4">
                         <h3 className="text-lg font-semibold text-gray-700">
                             ❄️ Mais Frio
