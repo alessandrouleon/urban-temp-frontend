@@ -39,7 +39,7 @@ export function ListNeighborhoods() {
                                     "°C",
                                     ""
                                 ),
-                                condicao: clima.weathercode,
+                                condicao: clima.weathercode ?? "",
                                 umidade: (clima.humidity ?? "").replace(
                                     "%",
                                     ""
