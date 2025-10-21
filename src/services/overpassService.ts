@@ -17,7 +17,7 @@ export const getNeighborhoodsFromCity = async (): Promise<Neighborhood[]> => {
 
     const res = await axios.get<{ elements: OverpassElement[] }>(
         "https://overpass-api.de/api/interpreter",
-        { params: { data: query } }
+        { params: { data: query }, timeout: 60000 }
     );
 
     return res.data.elements
