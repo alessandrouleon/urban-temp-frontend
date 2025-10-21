@@ -46,9 +46,6 @@ const WeatherComposedChart: React.FC = () => {
                     current: 0,
                     total: limitedNeighborhoods.length,
                 });
-                console.log(
-                    `🌍 Buscando dados para ${limitedNeighborhoods.length} bairros...`
-                );
 
                 // Usa a função de lote com controle de concorrência e progresso
                 const weatherResults = await getTemperatureBatch(
@@ -87,9 +84,6 @@ const WeatherComposedChart: React.FC = () => {
                     return;
                 }
 
-                console.log(
-                    `✅ ${validResults.length} bairros carregados com sucesso`
-                );
                 setChartData(validResults);
             } catch (err) {
                 console.error("Erro ao buscar dados:", err);
