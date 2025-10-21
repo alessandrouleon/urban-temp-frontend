@@ -12,7 +12,7 @@ interface BairroClima {
     vento: string;
 }
 
-export function Log() {
+export function ListNeighborhoods() {
     const [bairrosClima, setBairrosClima] = useState<BairroClima[]>([]);
     const [carregando, setCarregando] = useState(true);
 

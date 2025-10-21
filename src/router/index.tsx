@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import MainLayout from "../Layout/MainLayout";
 import { Dashboard } from "../pages/Dashboard";
 import { Home } from "../pages/Home";
-import { Log } from "../pages/Log";
+import { ListNeighborhoods } from "../pages/ListNeighborhoods";
 import { PageMaps } from "../pages/Maps";
 // import { Report } from "../pages/Report";
 // import { Setting } from "../pages/Setting";
@@ -14,7 +14,10 @@ export function AppRoutes() {
                 <Route path="/" element={<Home />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/maps" element={<PageMaps />} />
-                <Route path="/log" element={<Log />} />
+                <Route
+                    path="/list-neighborhoods"
+                    element={<ListNeighborhoods />}
+                />
                 {/* <Route path="/setting" element={<Setting />} />
        
                 <Route path="/report" element={<Report />} /> */}
