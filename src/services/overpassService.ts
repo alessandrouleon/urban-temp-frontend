@@ -21,8 +21,17 @@ export const getNeighborhoodsFromCity = async (): Promise<Neighborhood[]> => {
     );
 
     return res.data.elements
-        .filter((el): el is OverpassElement & { tags: { name: string } } =>
-            Boolean(el.tags?.name)
+        .filter(
+            (
+                el
+            ): el is OverpassElement & {
+                tags: { name: string };
+                lat: number;
+                lon: number;
+            } =>
+                Boolean(el.tags?.name) &&
+                typeof el.lat === "number" &&
+                typeof el.lon === "number"
         )
         .map((el) => ({
             name: el.tags.name,

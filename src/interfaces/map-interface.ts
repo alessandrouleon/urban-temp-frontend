@@ -12,7 +12,15 @@ export interface OverpassElement {
         name?: string;
         [key: string]: string | undefined;
     };
-    type: string;
+    type: "node" | "way" | "relation";
+    nodes?: number[];
+    members?: Array<{
+        type: string;
+        ref: number;
+        role: string;
+        geometry?: Array<{ lat: number; lon: number }>;
+    }>;
+    geometry?: Array<{ lat: number; lon: number }>;
 }
 
 export interface WeatherData {
@@ -31,9 +39,14 @@ export interface MapsProps {
     height?: string;
     neighborhoods: Neighborhood[];
     temperatures: Record<string, WeatherData | null>;
+    showHeatmap?: boolean;
+    showMarkers?: boolean;
 }
 
 export interface NeighborhoodWeather {
     neighborhood: Neighborhood;
     weather: WeatherData;
+}
+export interface NeighborhoodWithBoundary extends Neighborhood {
+    boundary: [number, number][]; // Array de coordenadas [lat, lon]
 }

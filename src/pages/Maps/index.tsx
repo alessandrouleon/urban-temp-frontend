@@ -89,16 +89,16 @@ export function PageMaps() {
                     <div className="flex-1">
                         <Maps
                             width="100%"
-                            height="70vh"
+                            height="80vh"
                             neighborhoods={neighborhoods}
                             temperatures={temperatures}
                         />
                     </div>
 
-                    <div className="hidden 2xl:block 2xl:w-[30%]">
+                    <div className="hidden 2xl:block 2xl:w-[20%]">
                         <TemperatureExtremes
                             width="100%"
-                            height="70vh"
+                            height="80vh"
                             neighborhoods={neighborhoods}
                             temperatures={temperatures}
                         />
