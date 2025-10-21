@@ -1,10 +1,9 @@
 import {
-    FileText,
+    //  FileText,
     Home,
-    Layers,
+    //   Layers,
     LayoutGrid,
     Map,
-    Settings,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
@@ -20,9 +19,9 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         { icon: Home, label: "Home", path: "/" },
         { icon: LayoutGrid, label: "Dashboard", path: "/dashboard" },
         { icon: Map, label: "Map", path: "/maps" },
-        { icon: Settings, label: "Setting", path: "/setting" },
-        { icon: Layers, label: "Log", path: "/log" },
-        { icon: FileText, label: "Report", path: "/report" },
+        // { icon: Settings, label: "Setting", path: "/setting" },
+        // { icon: Layers, label: "Log", path: "/log" },
+        // { icon: FileText, label: "Report", path: "/report" },
     ];
 
     return (

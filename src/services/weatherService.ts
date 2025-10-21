@@ -25,40 +25,7 @@
 //         return null;
 //     }
 // };
-// import axios from "axios";
-// import type { WeatherData } from "../interfaces/map-interface";
 
-// export const getTemperature = async (
-//     lat: number,
-//     lon: number
-// ): Promise<WeatherData | null> => {
-//     try {
-//         const res = await axios.get(
-//             `https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${lat}&lon=${lon}`
-//         );
-
-//         const data = res.data.properties.timeseries[0].data;
-//         const instant = data.instant.details;
-//         const next1h = data.next_1_hours?.details;
-//         const symbol = data.next_1_hours?.summary?.symbol_code;
-
-//         return {
-//             temp: `${instant.air_temperature}°C`,
-//             feelsLike: `${instant.air_temperature}°C`, // YR.no não fornece "apparent_temperature"
-//             humidity: `${instant.relative_humidity}%`,
-//             windspeed: `${instant.wind_speed} m/s`,
-//             pressure: `${instant.air_pressure_at_sea_level} hPa`,
-//             precipitation: `${next1h?.precipitation_amount ?? 0} mm`,
-//             weathercode: symbol ?? "unknown",
-//             updatedAt: res.data.properties.meta.updated_at,
-//         };
-//     } catch (err) {
-//         console.error("Erro ao obter dados do YR.no:", err);
-//         return null;
-//     }
-// };
-
-// src/services/weatherService.ts
 import axios from "axios";
 import type { WeatherData } from "../interfaces/map-interface";
 
@@ -83,7 +50,6 @@ export const getTemperature = async (
     // Verifica cache
     const cached = weatherCache.get(cacheKey);
     if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-        console.log(`✅ Cache hit para ${cacheKey}`);
         return cached.data;
     }
 
@@ -94,9 +60,6 @@ export const getTemperature = async (
             const res = await axios.get(
                 `https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${lat}&lon=${lon}`,
                 {
-                    headers: {
-                        "User-Agent": "WeatherApp/1.0 (contact@example.com)", // IMPORTANTE!
-                    },
                     timeout: 10000, // 10 segundos timeout
                 }
             );
@@ -123,7 +86,6 @@ export const getTemperature = async (
                 timestamp: Date.now(),
             });
 
-            console.log(`✅ Dados obtidos para ${cacheKey}`);
             return weatherData;
         } catch (err) {
             console.error(
@@ -134,15 +96,10 @@ export const getTemperature = async (
             // Se não for a última tentativa, aguarda antes de tentar novamente
             if (attempt < retries) {
                 const waitTime = attempt * 2000; // Backoff exponencial: 2s, 4s, 6s
-                console.log(
-                    `⏳ Aguardando ${waitTime}ms antes de tentar novamente...`
-                );
                 await delay(waitTime);
             }
         }
     }
-
-    console.error(`❌ Falha após ${retries} tentativas`);
     return null;
 };
 
@@ -185,5 +142,4 @@ export const getTemperatureBatch = async (
 // Função para limpar cache manualmente
 export const clearWeatherCache = () => {
     weatherCache.clear();
-    console.log("🧹 Cache limpo");
 };
