@@ -1,4 +1,3 @@
-// src/components/charts/LoadingProgress.tsx
 import React from "react";
 
 interface LoadingProgressProps {

@@ -1,7 +1,7 @@
 import {
     //  FileText,
     Home,
-    //   Layers,
+    Layers,
     LayoutGrid,
     Map,
 } from "lucide-react";
@@ -20,7 +20,7 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         { icon: LayoutGrid, label: "Dashboard", path: "/dashboard" },
         { icon: Map, label: "Map", path: "/maps" },
         // { icon: Settings, label: "Setting", path: "/setting" },
-        // { icon: Layers, label: "Log", path: "/log" },
+        { icon: Layers, label: "Log", path: "/log" },
         // { icon: FileText, label: "Report", path: "/report" },
     ];
 
